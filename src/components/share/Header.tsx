@@ -6,10 +6,15 @@ import { Card, CardContent } from "@/components/ui/card";
 import { User, Lock, LogOut } from "lucide-react";
 // import ChangePasswordModal from "./ChangePasswordModal";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 export default function Header() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const avatarRef = useRef<HTMLDivElement>(null);
+  const { data: session } = useSession();
+      const user = session?.user as any;
+      const email = user?.email;
+      console.log(email)
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -60,7 +65,7 @@ export default function Header() {
           className="flex items-center space-x-2 text-white text-sm cursor-pointer hover:bg-white/10 rounded-lg px-2 py-1 transition-colors"
           onClick={toggleDropdown}
         >
-          <span>tanvir@gmail.com</span>
+          <span>{email}</span>
           <Avatar className="h-8 w-8">
             <AvatarImage src="/placeholder.svg?height=32&width=32" />
             <AvatarFallback className="text-black">TA</AvatarFallback>

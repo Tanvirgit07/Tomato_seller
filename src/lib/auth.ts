@@ -8,6 +8,17 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
     maxAge: 7 * 24 * 60 * 60, // 7 days
   },
+  cookies: {
+    sessionToken: {
+      name: "next-auth.session-token-seller", // 🔹 আলাদা কুকি নাম
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+      },
+    },
+  },
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -40,15 +51,13 @@ export const authOptions: NextAuthOptions = {
             throw new Error(response?.message || "Login failed");
           }
 
-          // Safely get user object
           const user = response.data?.user || response.data;
           if (!user) throw new Error("User data not found");
 
           if (user.role !== "seller") {
-            throw new Error("Only non-Seller users can access this page");
+            throw new Error("Only Seller users can access this dashboard");
           }
 
-          // Access token could be inside response.data or response.accessToken
           const accessToken = response.data?.accessToken || response.accessToken || null;
 
           return {

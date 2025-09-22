@@ -31,6 +31,9 @@ const navigation = [
     icon: ShoppingBasket,
   },
   { name: "Orders", href: "/orders", icon: ShoppingCart },
+  { name: "R Categoey", href: "/requested-category", icon: FileText },
+  { name: "RS Categoey", href: "/requested-sub-category", icon: FileText },
+
   { name: "Settings", href: "/setting", icon: FileText },
   // { name: "Message", href: "/message", icon: MessageSquare },
   { name: "Tutorial For Seller", href: "/requested-seller", icon: Scissors },

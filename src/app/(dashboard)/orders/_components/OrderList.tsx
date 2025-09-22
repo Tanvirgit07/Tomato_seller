@@ -4,10 +4,11 @@ import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Trash2, ChevronRight } from "lucide-react";
+import { Trash2, ChevronRight, Eye, Edit } from "lucide-react";
 import Loading from "@/components/share/Loading";
 import { DeleteModal } from "@/components/share/DeleteModal";
 import { useSession } from "next-auth/react";
+import { OrderDialog } from "@/components/share/OrderDiolog";
 
 type OrderProduct = {
   _id: string;
@@ -32,7 +33,6 @@ function OrderList() {
   const { data: session } = useSession();
   const user = session?.user as any;
   const email = user?.email;
-  console.log(email)
 
   const {
     data: response,
@@ -95,7 +95,12 @@ function OrderList() {
       </div>
     );
 
-  const orders: Order[] = response?.orders || [];
+  const allOrders: Order[] = response?.orders || [];
+
+  // filter করে শুধু সেই orders দেখাচ্ছি যেখানে loggedIn user এর product আছে
+  const filteredOrders = allOrders.filter((order) =>
+    order.products.some((p) => p.createdBy?.email === email)
+  );
 
   return (
     <div>
@@ -113,7 +118,7 @@ function OrderList() {
         </div>
       </div>
 
-      {orders.length === 0 ? (
+      {filteredOrders.length === 0 ? (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 text-center py-10 mt-10">
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
             No orders found
@@ -133,7 +138,7 @@ function OrderList() {
               <div className="col-span-2 text-xs font-semibold text-gray-600 uppercase text-center">
                 Customer
               </div>
-              <div className="col-span-4 text-xs font-semibold text-gray-600 uppercase text-center">
+              <div className="col-span-2 text-xs font-semibold text-gray-600 uppercase text-center">
                 Products
               </div>
               <div className="col-span-1 text-xs font-semibold text-gray-600 uppercase text-center">
@@ -145,87 +150,89 @@ function OrderList() {
               <div className="col-span-2 text-xs font-semibold text-gray-600 uppercase text-center">
                 Created At
               </div>
+              <div className="col-span-2 text-xs font-semibold text-gray-600 uppercase text-center">
+                Actions
+              </div>
             </div>
           </div>
 
           {/* Table Body */}
           <div className="divide-y divide-gray-100">
-            {orders.map((order, index) => {
-              // filter only products where createdBy.email matches logged in email
-              const filteredProducts = order.products.filter(
-                (p) => p.createdBy?.email === email
-              );
-
-              // যদি কোনো product match না করে তাহলে এই order skip হবে
-              if (filteredProducts.length === 0) return null;
-
-              return (
-                <div
-                  key={order._id}
-                  className={`grid grid-cols-12 gap-6 px-6 py-5 hover:bg-gray-50 ${
-                    index % 2 === 0 ? "bg-white" : "bg-gray-50/30"
-                  }`}
-                >
-                  {/* Order ID */}
-                  <div className="col-span-2 flex items-center">
-                    <span className="text-gray-900 font-medium truncate">
-                      {order._id}
-                    </span>
-                  </div>
-
-                  {/* Customer */}
-                  <div className="col-span-2 flex items-center justify-center">
-                    <span className="text-gray-700 font-medium text-sm truncate">
-                      {order.userId?.name || "N/A"}
-                    </span>
-                  </div>
-
-                  {/* Products */}
-                  <div className="col-span-4 flex flex-col gap-1">
-                    {filteredProducts.map((p) => (
-                      <div
-                        key={p._id}
-                        className="text-sm text-gray-600 flex justify-between"
-                      >
-                        <span className="font-medium">{p.name}</span>
-                        <span>
-                          {p.quantity} × ${p.price}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Amount */}
-                  <div className="col-span-1 flex items-center justify-center">
-                    <span className="text-gray-900 font-semibold">
-                      ${order.amount}
-                    </span>
-                  </div>
-
-                  {/* Status */}
-                  <div className="col-span-1 flex items-center justify-center">
-                    <span
-                      className={`px-2 py-1 rounded-lg text-xs font-semibold ${
-                        order.status === "pending"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : order.status === "paid"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                    >
-                      {order.status}
-                    </span>
-                  </div>
-
-                  {/* Created At */}
-                  <div className="col-span-2 flex items-center justify-center">
-                    <span className="text-sm text-gray-600">
-                      {formatDate(order.createdAt)}
-                    </span>
-                  </div>
+            {filteredOrders.map((order, index) => (
+              <div
+                key={order._id}
+                className={`grid grid-cols-12 gap-6 px-6 py-5 hover:bg-gray-50 ${
+                  index % 2 === 0 ? "bg-white" : "bg-gray-50/30"
+                }`}
+              >
+                {/* Order ID */}
+                <div className="col-span-2 flex items-center">
+                  <span className="text-gray-900 font-medium truncate">
+                    {order._id}
+                  </span>
                 </div>
-              );
-            })}
+
+                {/* Customer */}
+                <div className="col-span-2 flex items-center justify-center">
+                  <span className="text-gray-700 font-medium text-sm truncate">
+                    {order.userId?.name || "N/A"}
+                  </span>
+                </div>
+
+                {/* Products (only count) */}
+                <div className="col-span-2 flex items-center justify-center">
+                  <span className="text-sm text-gray-600">
+                    {
+                      order.products.filter((p) => p.createdBy?.email === email)
+                        .length
+                    }{" "}
+                    product(s)
+                  </span>
+                </div>
+
+                {/* Amount */}
+                <div className="col-span-1 flex items-center justify-center">
+                  <span className="text-gray-900 font-semibold">
+                    ${order.amount}
+                  </span>
+                </div>
+
+                {/* Status */}
+                <div className="col-span-1 flex items-center justify-center">
+                  <span
+                    className={`px-2 py-1 rounded-lg text-xs font-semibold ${
+                      order.status === "pending"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : order.status === "paid"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-800"
+                    }`}
+                  >
+                    {order.status}
+                  </span>
+                </div>
+
+                {/* Created At */}
+                <div className="col-span-2 flex items-center justify-center">
+                  <span className="text-sm text-gray-600">
+                    {formatDate(order.createdAt)}
+                  </span>
+                </div>
+
+                {/* Actions */}
+                <div className="col-span-2 flex items-center justify-center gap-3">
+                  <OrderDialog orderId={order._id} />
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="border-red-200 text-red-600 hover:bg-red-50 rounded-lg"
+                    onClick={() => handleDeleteClick(order._id)}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}

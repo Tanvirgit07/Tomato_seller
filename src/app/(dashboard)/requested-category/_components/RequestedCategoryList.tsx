@@ -7,23 +7,22 @@ import Link from "next/link";
 import Image from "next/image";
 import Loading from "@/components/share/Loading";
 import { DeleteModal } from "@/components/share/DeleteModal";
+
 const RequestedCategoryList: React.FC = () => {
   const {
     data: response,
     isLoading,
     isError,
-    refetch, // ✅ we’ll use this after delete
+    refetch,
   } = useQuery({
     queryKey: ["category"],
     queryFn: async () => {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/category/allcategory`
       );
-
       if (!res.ok) {
         throw new Error("Failed to fetch categories");
       }
-
       return res.json();
     },
   });
@@ -33,7 +32,6 @@ const RequestedCategoryList: React.FC = () => {
     null
   );
 
-  // Helper function to strip HTML tags from description
   const stripHtml = (html: string) => {
     if (typeof window === "undefined") return html;
     const temp = document.createElement("div");
@@ -41,7 +39,6 @@ const RequestedCategoryList: React.FC = () => {
     return temp.textContent || temp.innerText || "";
   };
 
-  // Helper function to format date
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -57,7 +54,6 @@ const RequestedCategoryList: React.FC = () => {
 
   const confirmDelete = async () => {
     if (!selectedCategoryId) return;
-
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/category/deletecategory/${selectedCategoryId}`,
@@ -69,13 +65,11 @@ const RequestedCategoryList: React.FC = () => {
         }
       );
 
-      if (!res.ok) {
-        throw new Error("Failed to delete category");
-      }
+      if (!res.ok) throw new Error("Failed to delete category");
 
       setDeleteModalOpen(false);
       setSelectedCategoryId(null);
-      refetch(); // ✅ refresh category list
+      refetch();
     } catch (error) {
       console.error(error);
     }
@@ -84,14 +78,12 @@ const RequestedCategoryList: React.FC = () => {
   if (isLoading) return <Loading />;
   if (isError)
     return (
-      <div className="bg-gray-50 min-h-screen">
-        <div className="flex justify-center items-center h-64">
-          <div className="text-center">
-            <div className="text-red-500 text-xl font-semibold mb-2">
-              ⚠️ Error loading categories
-            </div>
-            <p className="text-gray-600">Please try refreshing the page</p>
+      <div className="bg-gray-50 min-h-screen flex justify-center items-center">
+        <div className="text-center">
+          <div className="text-red-500 text-xl font-semibold mb-2">
+            ⚠️ Error loading categories
           </div>
+          <p className="text-gray-600">Please try refreshing the page</p>
         </div>
       </div>
     );
@@ -99,7 +91,7 @@ const RequestedCategoryList: React.FC = () => {
   const categories = response?.data || [];
 
   return (
-    <div className="">
+    <div>
       {/* Header Section */}
       <div className="flex items-center justify-between">
         <div className="flex-1">
@@ -118,7 +110,7 @@ const RequestedCategoryList: React.FC = () => {
           </nav>
         </div>
         <Link href="/requested-category/add">
-          <Button className="bg-red-500 cursor-pointer text-base hover:bg-red-600 text-white px-8 h-[50px] rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2">
+          <Button className="bg-red-500 text-base hover:bg-red-600 text-white px-8 h-[50px] rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2">
             <Plus className="!w-7 !h-7" />
             Add Category
           </Button>
@@ -126,7 +118,7 @@ const RequestedCategoryList: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <div className="">
+      <div>
         {categories.length === 0 ? (
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 text-center py-10">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
@@ -147,16 +139,19 @@ const RequestedCategoryList: React.FC = () => {
             {/* Table Header */}
             <div className="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
               <div className="grid grid-cols-12 gap-6 px-6 py-4">
-                <div className="col-span-4 text-xs font-semibold text-gray-600 uppercase">
-                  Category Name
+                <div className="col-span-3 text-xs font-semibold text-gray-600 uppercase">
+                  Category
                 </div>
                 <div className="col-span-2 text-xs font-semibold text-gray-600 uppercase text-center">
                   Sub-Categories
                 </div>
                 <div className="col-span-2 text-xs font-semibold text-gray-600 uppercase text-center">
+                  Status
+                </div>
+                <div className="col-span-2 text-xs font-semibold text-gray-600 uppercase text-center">
                   Date Added
                 </div>
-                <div className="col-span-4 text-xs font-semibold text-gray-600 uppercase text-center">
+                <div className="col-span-3 text-xs font-semibold text-gray-600 uppercase text-center">
                   Actions
                 </div>
               </div>
@@ -164,15 +159,15 @@ const RequestedCategoryList: React.FC = () => {
 
             {/* Table Body */}
             <div className="divide-y divide-gray-100">
-              {categories.map((category: any , index:any) => (
+              {categories.map((category: any, index: number) => (
                 <div
                   key={category._id}
                   className={`grid grid-cols-12 gap-6 px-6 py-5 hover:bg-gray-50 ${
                     index % 2 === 0 ? "bg-white" : "bg-gray-50/30"
                   }`}
                 >
-                  {/* Category Name */}
-                  <div className="col-span-4 flex items-center gap-4">
+                  {/* Category Info */}
+                  <div className="col-span-3 flex items-center gap-4">
                     <Image
                       width={56}
                       height={56}
@@ -197,6 +192,21 @@ const RequestedCategoryList: React.FC = () => {
                     </span>
                   </div>
 
+                  {/* Status */}
+                  <div className="col-span-2 flex items-center justify-center">
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                        category.status === "approved"
+                          ? "bg-green-50 text-green-700"
+                          : category.status === "pending"
+                          ? "bg-yellow-50 text-yellow-700"
+                          : "bg-gray-50 text-gray-700"
+                      }`}
+                    >
+                      {category.status}
+                    </span>
+                  </div>
+
                   {/* Date */}
                   <div className="col-span-2 flex items-center justify-center">
                     <div className="text-center">
@@ -213,7 +223,7 @@ const RequestedCategoryList: React.FC = () => {
                   </div>
 
                   {/* Actions */}
-                  <div className="col-span-4 flex items-center justify-center gap-3">
+                  <div className="col-span-3 flex items-center justify-center gap-3">
                     <Link href={`/category/edit/${category._id}`}>
                       <Button
                         variant="outline"

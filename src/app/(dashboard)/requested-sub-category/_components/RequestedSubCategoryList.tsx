@@ -19,6 +19,7 @@ type SubCategory = {
     createdAt: string;
     updatedAt: string;
   };
+  status: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -78,6 +79,37 @@ function RequestedSubCategoryList() {
       month: "2-digit",
       day: "2-digit",
     });
+
+  const getStatusBadge = (status: string) => {
+    const base =
+      "px-3 py-1 rounded-full text-xs font-semibold inline-block text-center";
+    switch (status) {
+      case "approved":
+        return (
+          <span className={`${base} bg-green-100 text-green-700`}>
+            Approved
+          </span>
+        );
+      case "pending":
+        return (
+          <span className={`${base} bg-yellow-100 text-yellow-700`}>
+            Pending
+          </span>
+        );
+      case "rejected":
+        return (
+          <span className={`${base} bg-red-100 text-red-700`}>
+            Rejected
+          </span>
+        );
+      default:
+        return (
+          <span className={`${base} bg-gray-100 text-gray-700`}>
+            {status}
+          </span>
+        );
+    }
+  };
 
   if (isLoading) return <Loading />;
   if (isError)
@@ -143,13 +175,16 @@ function RequestedSubCategoryList() {
               <div className="col-span-2 text-xs font-semibold text-gray-600 uppercase text-center">
                 Parent Category
               </div>
+              <div className="col-span-1 text-xs font-semibold text-gray-600 uppercase text-center">
+                Status
+              </div>
               <div className="col-span-2 text-xs font-semibold text-gray-600 uppercase text-center">
                 Created At
               </div>
               <div className="col-span-2 text-xs font-semibold text-gray-600 uppercase text-center">
                 Updated At
               </div>
-              <div className="col-span-3 text-xs font-semibold text-gray-600 uppercase text-center">
+              <div className="col-span-2 text-xs font-semibold text-gray-600 uppercase text-center">
                 Actions
               </div>
             </div>
@@ -190,6 +225,11 @@ function RequestedSubCategoryList() {
                   </span>
                 </div>
 
+                {/* Status */}
+                <div className="col-span-1 flex items-center justify-center">
+                  {getStatusBadge(sub.status)}
+                </div>
+
                 {/* Created At */}
                 <div className="col-span-2 flex items-center justify-center">
                   <span className="text-sm text-gray-600">
@@ -205,7 +245,7 @@ function RequestedSubCategoryList() {
                 </div>
 
                 {/* Actions */}
-                <div className="col-span-3 flex items-center justify-center gap-3">
+                <div className="col-span-2 flex items-center justify-center gap-3">
                   <Link href={`/sub-category/edit/${sub._id}`}>
                     <Button
                       variant="outline"

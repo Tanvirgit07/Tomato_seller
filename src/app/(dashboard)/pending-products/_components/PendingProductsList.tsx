@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import React, { useState } from "react";
@@ -5,7 +6,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash2, ChevronRight, Plus } from "lucide-react";
+import { Trash2, ChevronRight, Plus } from "lucide-react";
 import { toast } from "sonner";
 import Loading from "@/components/share/Loading";
 import { DeleteModal } from "@/components/share/DeleteModal";

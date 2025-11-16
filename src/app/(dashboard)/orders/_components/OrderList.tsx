@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Trash2, ChevronRight, Eye, Edit } from "lucide-react";
+import { Trash2, ChevronRight} from "lucide-react";
 import Loading from "@/components/share/Loading";
 import { DeleteModal } from "@/components/share/DeleteModal";
 import { useSession } from "next-auth/react";
@@ -31,6 +31,7 @@ type Order = {
 
 function OrderList() {
   const { data: session } = useSession();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const user = session?.user as any;
   const email = user?.email;
 

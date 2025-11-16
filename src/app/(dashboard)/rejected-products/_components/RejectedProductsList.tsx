@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash2, ChevronRight, Plus } from "lucide-react";
+import { Trash2, ChevronRight, Plus } from "lucide-react";
 import { toast } from "sonner";
 import Loading from "@/components/share/Loading";
 import { DeleteModal } from "@/components/share/DeleteModal";
@@ -88,6 +88,7 @@ function RejectedProductsList() {
   });
 
   // ✅ Update status mutation
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const updateStatusMutation = useMutation<
     { success: boolean; message: string },
     Error,

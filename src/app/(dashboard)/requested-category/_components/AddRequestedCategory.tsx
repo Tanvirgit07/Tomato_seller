@@ -46,6 +46,7 @@ const formSchema = z.object({
 export function AddRequestedCategory() {
   const [preview, setPreview] = useState<string | null>(null);
   const { data: session } = useSession();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const user = session?.user as any;
   const token = user?.accessToken;
   console.log(token);

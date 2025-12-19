@@ -16,6 +16,7 @@ export default function Header() {
       const user = session?.user as any;
       const email = user?.email;
       console.log(email)
+      console.log(session)
 
   // Close dropdown when clicking outside
   useEffect(() => {

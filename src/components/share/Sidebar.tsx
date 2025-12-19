@@ -44,7 +44,7 @@ export function Sidebar() {
   return (
     <div className="flex h-screen sticky bottom-0 top-0 w-[320px] flex-col bg-[#212121] z-50">
       {/* Logo */}
-      <div className="h-[80px] flex items-center justify-start shadow-md ml-3">
+      <div className="h-[80px] flex items-center justify-start ml-3">
         <div className="text-2xl flex gap-1 font-bold text-blue-600 uppercase tracking-wider">
           <div className="h-[50px] w-[50px]">
             <Image
@@ -66,7 +66,7 @@ export function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-6 flex flex-col items-center justify-start px-3 overflow-y-auto mt-3">
+      <nav className="flex-1 space-y-3 flex flex-col items-center justify-start px-3 overflow-y-auto mt-3">
         {navigation.map((item) => {
           const isActive =
             pathname === item.href ||

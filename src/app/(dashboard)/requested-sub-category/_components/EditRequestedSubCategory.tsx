@@ -23,13 +23,14 @@ import {
 } from "@/components/ui/select";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronRight, Send } from "lucide-react";
+import { ArrowLeft, ChevronRight, Send } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 import "react-quill/dist/quill.snow.css";
+import Loading from "@/components/share/Loading";
 
 interface Category {
   _id: string;
@@ -122,21 +123,10 @@ export function EditRequestedSubCategory() {
       setPreview(subCategory.image || null);
     }
   }, [subCategory, categories, categoriesLoading, form]);
-  // useEffect(() => {
-  //   form.reset({
-  //     name: subCategory?.name || "",
-  //     categoryId: subCategory?.category?._id || "",
-  //     description: subCategory?.description || "",
-  //     image: null,
-  //   });
-  //   setPreview(subCategory?.image || null);
-  // }, [subCategory, form]);
-
-  // Mutation to update subcategory
   const updateSubCategoryMutation = useMutation({
     mutationFn: async (formData: FormData) => {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/subcategory/updatesubcategory/${id}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/subcategory/editsubcategory/${id}`,
         {
           method: "PUT",
           body: formData,
@@ -166,7 +156,7 @@ export function EditRequestedSubCategory() {
     updateSubCategoryMutation.mutate(formData);
   };
 
-  if (isLoading || categoriesLoading) return <p>Loading...</p>;
+  if (isLoading || categoriesLoading) return <Loading />;
 
   return (
     <div>
@@ -319,7 +309,16 @@ export function EditRequestedSubCategory() {
           </div>
 
           {/* Submit */}
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-5">
+            <Link href="/requested-sub-category">
+              <Button
+                type="submit"
+                className="mt-4 cursor-pointer w-[120px] h-[45px] flex items-center gap-2 text-white shadow-md hover:shadow-lg transition-all duration-200"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Back
+              </Button>
+            </Link>
             <Button
               type="submit"
               className="mt-4 cursor-pointer w-[120px] h-[45px] flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white shadow-md hover:shadow-lg transition-all duration-200"

@@ -29,7 +29,7 @@ const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 import "react-quill/dist/quill.snow.css";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronRight, Send } from "lucide-react";
+import { ArrowLeft, ChevronRight, Send } from "lucide-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
@@ -264,7 +264,16 @@ export function AddRequestedSubCategory() {
           </div>
 
           {/* Submit Button */}
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-5">
+            <Link href="/requested-sub-category">
+              <Button
+                type="submit"
+                className="mt-4 cursor-pointer w-[120px] h-[45px] flex items-center gap-2 text-white shadow-md hover:shadow-lg transition-all duration-200"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Back
+              </Button>
+            </Link>
             <Button
               type="submit"
               className="mt-4 cursor-pointer w-[120px] h-[45px] flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white shadow-md hover:shadow-lg transition-all duration-200"

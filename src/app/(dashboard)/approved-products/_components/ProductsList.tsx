@@ -9,6 +9,14 @@ import { Edit, Trash2, ChevronRight, Plus } from "lucide-react";
 import { toast } from "sonner";
 import Loading from "@/components/share/Loading";
 import { DeleteModal } from "@/components/share/DeleteModal";
+import { useSession } from "next-auth/react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type FoodItem = {
   _id: string;
@@ -26,6 +34,7 @@ type FoodItem = {
   status?: string;
   user?: {
     _id: string;
+    email: string;
     role: string;
   };
 };
@@ -34,6 +43,10 @@ function ProductList() {
   const queryClient = useQueryClient();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+
+  const session = useSession();
+  const email = session?.data?.user?.email;
 
   // Fetch food items
   const {
@@ -53,10 +66,13 @@ function ProductList() {
 
   const foodItems: FoodItem[] = response?.data || [];
 
-  // ✅ Only approved + seller products
-  const filteredFoodItems = foodItems.filter(
-    (item) => item.status === "approved" && item.user?.role === "seller"
-  );
+  // ✅ Filter by logged-in user email and status
+  const filteredFoodItems = foodItems.filter((item) => {
+    const emailMatch = item.user?.email === email;
+    const statusMatch =
+      statusFilter === "all" || item.status === statusFilter;
+    return emailMatch && statusMatch;
+  });
 
   // Delete mutation
   const deleteProductMutation = useMutation<
@@ -122,7 +138,7 @@ function ProductList() {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
         <div className="flex-1">
           <h1 className="text-3xl font-bold text-gray-900">Food Items</h1>
           <nav className="flex items-center text-sm text-gray-500 mt-2">
@@ -133,29 +149,49 @@ function ProductList() {
             <span className="text-gray-900 font-medium">Food Items</span>
           </nav>
         </div>
-        <Link href="/approved-products/add">
-          <Button className="bg-red-500 hover:bg-red-600 text-white px-8 h-[50px] rounded-lg font-semibold shadow-lg flex items-center gap-2">
-            <Plus className="!w-7 !h-7" />
-            Add Product
-          </Button>
-        </Link>
+        <div className="flex items-center gap-4">
+          {/* Status Filter */}
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-[180px] !h-[40px] border-gray-300">
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="approved">Approved</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="rejected">Rejected</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {/* Add Product Button */}
+          <Link href="/approved-products/add">
+            <Button className="bg-red-500 hover:bg-red-600 text-white h-[40px] rounded-lg font-semibold shadow-lg flex items-center gap-2">
+              <Plus className="!w-6 !h-6" />
+              Add Product
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Main content */}
       {filteredFoodItems.length === 0 ? (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 text-center py-10 mt-10">
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
-            No approved seller products found
+            No products found
           </h3>
           <p className="text-gray-500 mb-6">
-            Only approved products from sellers will show here
+            {statusFilter === "all"
+              ? "You haven't added any products yet"
+              : `No ${statusFilter} products found`}
           </p>
-          <Link href="/product/add">
+          <div className="flex items-center justify-center">
+            <Link href="/approved-products/add">
             <Button className="bg-red-500 hover:bg-red-600 text-white px-6 rounded-lg flex items-center gap-2">
               <Plus className="w-4 h-4" />
               Add Food Item
             </Button>
           </Link>
+          </div>
         </div>
       ) : (
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mt-10">
@@ -234,10 +270,19 @@ function ProductList() {
 
                 {/* Status */}
                 <div className="col-span-2 flex items-center justify-center text-center">
-                  <span className="text-gray-700 font-medium">
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                      item.status === "approved"
+                        ? "bg-green-100 text-green-700"
+                        : item.status === "pending"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
                     {item.status}
                   </span>
                 </div>
+
                 {/* Actions */}
                 <div className="col-span-1 flex items-center justify-center gap-3">
                   <Link href={`/approved-products/edit/${item._id}`}>

@@ -8,8 +8,6 @@ import {
   FileText,
   LogOut,
   ShoppingCart,
-  Grip,
-  ShoppingBasket,
   Scissors,
   // Bell,
 } from "lucide-react";
@@ -19,16 +17,16 @@ import Image from "next/image";
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
   {
-    name: "Approved Products",
+    name: "Product Of Sellers",
     href: "/approved-products",
     icon: LayoutDashboard,
   },
-  { name: "Pending Products", href: "/pending-products", icon: Grip },
-  {
-    name: "Rejected Products",
-    href: "/rejected-products",
-    icon: ShoppingBasket,
-  },
+  // { name: "Pending Products", href: "/pending-products", icon: Grip },
+  // {
+  //   name: "Rejected Products",
+  //   href: "/rejected-products",
+  //   icon: ShoppingBasket,
+  // },
   { name: "Orders", href: "/orders", icon: ShoppingCart },
   { name: "R Categoey", href: "/requested-category", icon: FileText },
   { name: "R S Categoey", href: "/requested-sub-category", icon: FileText },

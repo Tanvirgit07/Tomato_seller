@@ -1,8 +1,11 @@
 import React from 'react'
+import TotalOverviewSeller from './_components/TotalOverviewSeller'
 
 function page() {
   return (
-    <div>page</div>
+    <div>
+      <TotalOverviewSeller />
+    </div>
   )
 }
 

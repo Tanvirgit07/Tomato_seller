@@ -124,7 +124,7 @@ export function EditCategoryForm() {
   return (
     <div>
       {/* Header Section */}
-      <div className="flex items-center justify-between mb-10">
+      <div className="flex items-center justify-between mb-10 bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
         <div className="flex-1">
           <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
             Main Categories
@@ -180,7 +180,7 @@ export function EditCategoryForm() {
                             value={quillField.value}
                             onChange={quillField.onChange}
                             placeholder="Category Description..."
-                            className="min-h-[200px]"
+                            className="h-[180px]"
                           />
                         )}
                       />
@@ -236,10 +236,14 @@ export function EditCategoryForm() {
           <div className="flex items-center justify-end">
             <Button
               type="submit"
-              className="mt-4 w-[120px] h-[50px] flex items-center gap-2"
+              className="mt-4 cursor-pointer w-[120px] h-[45px] flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white shadow-md hover:shadow-lg transition-all duration-200"
             >
-              <Send className="w-4 h-4" />
-              Submit
+              {updateCategoryMutation.isPending ? (
+                <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+              ) : (
+                <Send className="w-4 h-4" />
+              )}
+              {updateCategoryMutation.isPending ? "Submitting..." : "Submit"}
             </Button>
           </div>
         </form>

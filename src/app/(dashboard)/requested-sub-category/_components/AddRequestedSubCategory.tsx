@@ -29,7 +29,7 @@ const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 import "react-quill/dist/quill.snow.css";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Send } from "lucide-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
@@ -123,7 +123,7 @@ export function AddRequestedSubCategory() {
   return (
     <div className="">
       {/* Header Section */}
-      <div className="flex items-center justify-between mb-10">
+      <div className="flex items-center justify-between mb-10 bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
         <div className="flex-1">
           <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
             Sub Categories
@@ -183,7 +183,7 @@ export function AddRequestedSubCategory() {
                             value={field.value}
                             onChange={field.onChange}
                             placeholder="Write subcategory description..."
-                            className="min-h-[300px]"
+                            className="h-[304px]"
                           />
                         )}
                       />
@@ -267,9 +267,14 @@ export function AddRequestedSubCategory() {
           <div className="flex justify-end">
             <Button
               type="submit"
-              className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg shadow-md"
+              className="mt-4 cursor-pointer w-[120px] h-[45px] flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white shadow-md hover:shadow-lg transition-all duration-200"
             >
-              Save Subcategory
+              {createsubCategoryMutation.isPending ? (
+                <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+              ) : (
+                <Send className="w-4 h-4" />
+              )}
+              {createsubCategoryMutation.isPending ? "Submitting..." : "Submit"}
             </Button>
           </div>
         </form>

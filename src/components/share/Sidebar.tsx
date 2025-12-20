@@ -27,9 +27,9 @@ const navigation = [
   //   href: "/rejected-products",
   //   icon: ShoppingBasket,
   // },
-  { name: "Orders", href: "/orders", icon: ShoppingCart },
-  { name: "R Categoey", href: "/requested-category", icon: FileText },
-  { name: "R S Categoey", href: "/requested-sub-category", icon: FileText },
+  { name: "My Orders", href: "/orders", icon: ShoppingCart },
+  { name: "Requested Categoey", href: "/requested-category", icon: FileText },
+  { name: "Requested SubCategoey", href: "/requested-sub-category", icon: FileText },
 
   { name: "Settings", href: "/setting", icon: FileText },
   // { name: "Message", href: "/message", icon: MessageSquare },
@@ -40,7 +40,7 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <div className="flex h-screen sticky bottom-0 top-0 w-[320px] flex-col bg-[#212121] z-50">
+    <div className="flex h-screen sticky bottom-0 top-0 w-[350px] flex-col bg-[#212121] z-50">
       {/* Logo */}
       <div className="h-[80px] flex items-center justify-start ml-3">
         <div className="text-2xl flex gap-1 font-bold text-blue-600 uppercase tracking-wider">

@@ -23,7 +23,7 @@ import "react-quill/dist/quill.snow.css";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { ChevronRight, Save } from "lucide-react";
+import { ChevronRight, Send } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 
@@ -90,7 +90,7 @@ export function AddRequestedCategory() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["category"] });
       toast.success(data.message || "Category created successfully!");
-      router.push("/category");
+      router.push("/requested-category");
     },
     onError: (err: unknown) => {
       if (err instanceof Error) {
@@ -115,7 +115,7 @@ export function AddRequestedCategory() {
   return (
     <div>
       {/* Header Section */}
-      <div className="flex items-center justify-between mb-10">
+      <div className="flex items-center justify-between mb-10 bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
         <div className="flex-1">
           <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
             Main Categories
@@ -168,7 +168,7 @@ export function AddRequestedCategory() {
                         value={field.value}
                         onChange={field.onChange}
                         placeholder="Category Description..."
-                        className="min-h-[200px]"
+                        className="h-[200px]"
                       />
                     )}
                   />
@@ -217,10 +217,14 @@ export function AddRequestedCategory() {
           <div className="flex justify-end">
             <Button
               type="submit"
-              className="mt-4 text-base cursor-pointer w-[120px] h-[50px] flex items-center justify-center gap-2"
+              className="mt-4 cursor-pointer w-[120px] h-[45px] flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white shadow-md hover:shadow-lg transition-all duration-200"
             >
-              <Save className="!w-5.5 !h-5.5 mr-1" />
-              Save
+              {createCategoryMutation.isPending ? (
+                <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+              ) : (
+                <Send className="w-4 h-4" />
+              )}
+              {createCategoryMutation.isPending ? "Submitting..." : "Submit"}
             </Button>
           </div>
         </form>
